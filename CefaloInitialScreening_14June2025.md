@@ -208,3 +208,57 @@ public class AppRealEstate : IAppRealEstate
 	// start your code here
 }
 ```
+
+---
+
+You’ll have to create **PasswordSanitizer** class which has a **Filtered** method which takes some passwords, basically **List<string>**. Remove all the passwords that meets the following conditions:
+
+- password has length less than 5
+- password only has digits (i.e 6411649731)
+- password only has english letters (i.e passNewpass)
+
+The method should return the eligible password as space separated string.
+
+**Sample Inputs:**
+
+[”WordPress”,  “123321”, “pass@123, p12@”, “admin@5764”]
+
+**Sample Output:**
+
+pass@123 admin@5764
+
+```csharp
+public class PasswordSanitizer
+{
+	public string Filtered(List<string> passwords)
+	{
+		// start your code here
+	}
+}
+```
+
+---
+
+Your method will take a list of integer which represents the market-price of a stock in each days. If the price goes higher in any consecutive days, it is considered **UpTrend** and **DownTrend** otherwise. In any set of price given, if the **UpTrend** dominates then the user should be told to ‘**BUY**’, else ‘**WAIT**’.
+
+**Sample - 1:**
+
+**Input:** [102, 103, 106, 115, 105, 102, 106, 108]
+
+**Output:** “BUY”
+
+**Sample - 2:**
+
+**Input:** [102, 103, 102, 104, 105, 102, 100, 98]
+
+**Output:** “WAIT”
+
+```csharp
+public class TrendPredictor
+{
+	public string Predict(List<int> prices)
+	{
+		// start your code here
+	}
+}
+```
