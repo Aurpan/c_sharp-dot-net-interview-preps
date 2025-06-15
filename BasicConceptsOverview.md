@@ -1,12 +1,10 @@
 # OOP Concepts
 
 ## 1. Encapsulation
-
 - Bundling of data and methods in a single unit, which is called class.
 - Do not need to expose everything to the public space. It is achieved through ‘**Access Modifiers**’ and ‘**getter-setter**’ methods
     
-    ### Access Modifiers:
-    
+    ### Access Modifiers:  
     - **Public:** can be accessed by all
     - **Private:** can only be access by anyone within the same class
     - **Protected:** can only be accessed by anyone in the class, or only from child class (*parent can’t access protected prop of child*)
@@ -14,12 +12,10 @@
     - **Protected Internal:** accessible within same assembly or derived class
 
 ## 2. Abstraction
-
 - Hiding implementation details and showing only functionality to the user.
 - Can be achieved through **Interface** or **Abstract Class**.
 
 ## 3. Inheritance
-
 - Allows a class to inherit attributes and methods from another class.
 - Parent can hold child’s reference, not vice-versa.
 
@@ -174,17 +170,532 @@ int age = (int)numbObj;
     
     // output: This is the Salary of the Manager!
     ```
+<br><br><br>
+
+# Modifiers (Abstract, Sealed, Static)
+
+## Abstract Modifier
+
+- can be used with Methods or Classes
+- an Abstract Method doesn’t have an implementation (no body), only declaration
+- if even a single class is Abstract, the whole class needs to be Abstract
+- child classes are forced to implement that method
+- no instance can be created for Abstract class
+
+## Sealed Modifier
+
+- can be used with Methods or Classes
+- it prevents classes from being inherited and methods from being overridden
+- if applied to a method, the whole class can be inherited, just the method can’t be overridden
+
+## Static Modifiers
+
+- ‘static’ keyword can be used with property, method and class
+- when this keyword is used with property or method, that is then only belong to Class itself. No object of that class has ownership.
+
+```csharp
+Employee emp = new ();
+emp.Name = "Aurpan" // if 'Name' is a static property, it will show error
+
+// This is the correct way to access static property, Name
+Employee.Name = "Aurpan";
+```
+
+- can’t access non-static props from static methods; but can access static props from non-static methods
+
+### Static Class
+
+- can’t create instance/object, can’t be inherited
+- all the props and methods inside static class must be static
+- constructor of a class can be static. A static constructor can’t have a **Access Modifier** (see example below). This static constructor is invoked automatically by CLR when any static property or method is accessed.
+
+```csharp
+public class TestStatic
+{
+    public string FirstName { get; set; }
+    public static string LastName { get; set; }
+    public static int StaticVal { get; set; }
+    public static int StaticVal2 { get; set; }
+    public int NonStaticVal { get; set; }
+
+    static TestStatic() // static constructor - no Access Modifier
+    {
+        StaticVal2++;
+        NonStaticVal++; // will show error - can't use any non-static props or method inside static constructor
+    }
+    public TestStatic()
+    {
+        NonStaticVal++;
+        StaticVal2++; 
+    }
+}
+```
+
+> **doesn’t matter how many times we access any static property or method, the static constructor is invoked only once.**
+
+<br><br><br>
+
+# Variable Types
+
+## 1. Value Type
+
+- stored in stack
+- limited amount of space is allocated against each value type variable
+- short life. Can’t be used outside the scope
+- Example: int, byte, bool, char, struct …….
+
+## 2. Reference Type
+
+- stored in a heap
+- unlimited amount of memory
+- Example: String, Array, Object, Class ……
+
+ 
+
+# Parameter Types
+
+## 1. Ref
+
+variable will behave like reference type and become **mutable** (mutable - can be modified; immutable - can’t be modified)
+
+```csharp
+static void Main(string[] args)
+{
+    int num = 5;
+    Increment(ref num);
+
+    Console.WriteLine(num);
+}
+
+public static void Increment(ref int num)
+{
+    num++;
+}
+
+// Output: 6
+```
+
+Here, the num variable is modified inside ‘Increment’ method.
+
+## 2. Out
+
+Works similar to ‘ref’, but needs to be initialized inside the method.
+
+```csharp
+static void Main(string[] args)
+{
+    int num = 5;
+    Decreament(out num);
+
+    Console.WriteLine(num);
+}
+
+public static void Decreament(out int num)
+{
+    num = 10; // Must initialize before use
+    num--;
+}
+
+// Output: 9
+```
+
+<br><br><br>
+
+# Getter-Setter Method
+
+getter and setter (get-set) methods provides a control for handling the setting of data and fetching of data from outside of the class.
+
+```csharp
+public class Employee
+{
+    private int days;
+
+    public void Salary()
+    {
+        Console.WriteLine($"Salary: {1000 * days}");
+    }
+
+    public int WorkDays
+    {
+        get { return days; }
+        set 
+        {
+            if (value > 25)
+                days = 25;
+            else 
+                days = value;
+        }
+    }
+}
+```
+
+<br><br><br>
+# Generics
+
+```csharp
+// generic class
+public class GenericExample<T> where T : IComparable, new()
+{}
+
+// generic method
+public T GetMaxValue<T>(T val1, T val2)
+{}
+```
+
+with ‘where’, we put constrain on the T. 
+
+There can be 5 types of constrains:
+
+- where T : IComparable (any interface)
+- where T : Product (any class or sub classes)
+- where T : struct (value type)
+- where T : class (reference type)
+- where T : new() (an object who has default constructor)
+
+<br><br><br>
+
+# Delegates
+
+- an object that can call a method
+- it can carry reference of a method (similar to js)
+- delegates are classes derived from System.MulticastDelegate. Has 2 public property, **Target** & **Method**
+
+```csharp
+public class DemoDelegate
+{
+    public delegate int MathOperation(int a, int b); // declaration of a delegate
+
+    public void Calculator(int a, int b, MathOperation operation) // takes a delegate as perameter
+    {
+        int result = operation(a, b);
+        Console.WriteLine($"Result: {result}");
+    }
+}
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+		    DemoDelegate.MathOperation calculationTask = Add;
+		    
+        DemoDelegate demo = new DemoDelegate();
+        demo.Calculator(10, 5, calculationTask);
+    }
+
+    public static int Add(int a, int b)
+    {
+        return a + b;
+    }
+}
+```
+
+**‘Action’** and **‘Func’** both are generic delegates provided by .NET
+
+```csharp
+public class DemoDelegate
+{
+    public void Calculator(int a, int b, Func<int, int, int> operation) // delegate is replaced with Func<in, in, out>
+    {
+        int result = operation(a, b);
+        Console.WriteLine($"Result: {result}");
+    }
+}
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+		    Func<int, int, int> operation = (a, b) => a + b;
+		    
+        DemoDelegate demo = new DemoDelegate();
+        demo.Calculator(10, 5, operation );
+    }
+}
+```
+
+> Difference in **Func** and **Action:**
+Func has the last parameter to be OUT variable. So, Func returns something. But Action returns void
+
+<br><br><br>
+
+# Events
+
+- way of invoking multiple methods on specific conditions. Similar to notification.
+- Publisher - Subscriber model: Publisher publish an event and different class (user) subscribe to it.
+- must use a delegate with it. Event is a wrapper on to of delegate.
+
+The event can be created in many ways. Here are some examples
+
+**EventHandler:** it is delegate itself
+
+```csharp
+public class Account
+{
+    public event EventHandler<decimal>? BalanceLow; // publishing event  
+
+    public decimal AccountBalance { get; set; } = 20;
+    public decimal LowBalanceThreshold { get; set; } = 10;
+
+    public void Withdraw(decimal amount)
+    {
+        if (amount > AccountBalance)
+            throw new InvalidOperationException("Insufficient funds.");
+
+        AccountBalance -= amount;
+        Console.WriteLine($"Withdraw amount is {amount}");
+
+        if (AccountBalance < LowBalanceThreshold) 
+            BalanceLow?.Invoke(this, LowBalanceThreshold); // raise event if balance is low
+            // BalanceLow?.Invoke(this, EventArgs.Empty); => for non-generic EventHandler
+    }
+}
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+        Account account = new Account();
+        account.BalanceLow += OnBalanceLow; // subscribing to the event
+        account.Withdraw(11);
+    }
+
+    private static void OnBalanceLow(object? sender, decimal threshold)
+    {
+        Console.WriteLine($"Warning: Your account balance is less than {threshold}!");
+    }
+}
+```
+
+**Action and Delegate**
+
+```csharp
+public class Account
+{
+    public delegate void BalanceLowEventHandler(decimal lowBalanceThreshold); // delegate definition
+    public event BalanceLowEventHandler? BalanceLow; // publishing event with custom delegate 
+    // OR
+    public event Action<decimal>? BalanceLow; // publishing event with system provided delegate - Action
+
+    public decimal AccountBalance { get; set; } = 20;
+    public decimal LowBalanceThreshold { get; set; } = 10;
+
+    public void Withdraw(decimal amount)
+    {
+        if (amount > AccountBalance)
+            throw new InvalidOperationException("Insufficient funds.");
+
+        AccountBalance -= amount;
+        Console.WriteLine($"Withdraw amount is {amount}");
+
+        if (AccountBalance < LowBalanceThreshold) 
+            BalanceLow?.Invoke(LowBalanceThreshold); // raise event if balance is low  
+    }
+}
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+        Account account = new Account();
+        account.BalanceLow += OnBalanceLow; // subscribing to the event
+        account.Withdraw(11);
+    }
+
+    public static void OnBalanceLow(decimal threshold)
+    {
+        Console.WriteLine($"Warning: Your account balance is less than {threshold}!");
+    }
+}
+```
+
+> must unsubscribe after use, otherwise memory leakage might happen.
+> 
+
+```csharp
+// unsubscribe event
+account.BalanceLow -= OnBalanceLow;
+```
+
+<br><br><br>
+# Lambda Expression
+
+**Format: args = > {expressions}**
+
+```csharp
+static void Main(string[] args)
+{
+    DemoDelegate.MathOperation calculationTask = Add;
+    // OR, it can be written like this with Lambda:
+    DemoDelegate.MathOperation calculationTask = (num1, num2) => num1 + num2; // no need for separate Add method
     
-    ### Abstract Modifier
+    DemoDelegate demo = new DemoDelegate();
+    demo.Calculator(10, 5, calculationTask);
+}
+
+public static int Add(int a, int b)
+{
+    return a + b;
+}
+```
+**Predicate:** method which return bool value.
+
+<br><br><br>
+
+# IEnumerable & IQueryable
+
+```csharp
+// IEnumerable
+IEnumerable<Customer> enumerableCustomers = GetCustomer(); // already fetches all data; takes huge memory
+var filteredCustomers = enumerableCustomers.Where(c => c.Age > 40); 
+
+// IQueryable
+IQueryable<Customer> queryableCustomers = GetCustomer(); // fetches zero data;
+var filteredCustomers = queryableCustomers .Where(c => c.Age > 40); // still doesn't fetch the data
+var data = filteredCustomers.ToList(); // now fetches data
+```
+
+<br><br><br>
+
+# Mutable- Immutable
+
+**Mutable:** An object is mutable if its state (data/fields/properties) can be changed after it is created.
+
+```csharp
+public class Employee
+{
+	public string FullName {get; set;}
+	
+	public Employee(string fullName)
+	{
+		FullName = fullName;
+	}
+}
+
+Employee emp = new Employee("Aurpan");
+emp.FullName = "John"; // emp object is modified here. 
+```
+
+Here, ‘**Employee**’ class is mutable, because object of Employee can be modified after creation.
+
+If there are some publicly available methods for setting value to the props, the **Employee** class will still be **Mutable.**
+
+**Immutable:** just the opposite
+
+```csharp
+public class Employee
+{
+	public string FullName {get; }
+	
+	public Employee(string fullName)
+	{
+		FullName = fullName;
+	}
+}
+
+Employee emp = new Employee("Aurpan");
+emp.FullName = "John"; // will show error
+```
+
+> **strings** are **Immutable,** because every time a new value is assigned to a string variable, it doesn’t remove the previous value. Rather the previous value is stored in and internal array (or memory) and the new value is saved in another index. The string variable just points to the different index (different memory location).
+If two string variable has same value, they share the same memory location.
+
+<br><br><br>
+
+# Partial Class
+
+- Allows a class to be split into multiple classes with same name but ‘**partial**’ keyword on it
+- All props, methods and constructors in all files will be considered as a single file by the compiler
+- No prop, constructor or method can be duplicate
+
+  
+
+```csharp
+// Demo.cs
+public partial class Demo
+{
+    public int MyProperty1 { get; set; }
+
+    public void MyMethod1()
+    {
+        // Method implementation
+    }
+}
+
+// DemoPartial.cs
+public partial class Demo
+{
+    public int MyProperty2 { get; set; }
+
+    public void MyMethod2()
+    {
+        // Method implementation
+    }
+}
+```
+
+<br><br><br>
+
+# Attributes - Custom Attributes
+
+- kind of a label that allows us to add extra information or metadata to a class/method/prop which can be used by compiler/runtime/framework
+- attribute is simply a **class**
     
-    - can be used with Methods or Classes
-    - an Abstract Method doesn’t have an implementation (no body), only declaration
-    - if even a single class is Abstract, the whole class needs to be Abstract
-    - child classes are forced to implement that method
-    - no instance can be created for Abstract class
+    ## Custom Attribute
     
-    ### Sealed Modifier
+    - a class with **‘Attribute’ suffix**
+    - should be derived from **System.Attribute** class or any of its child class
     
-    - can be used with Methods or Classes
-    - it prevents classes from being inherited and methods from being overridden
-    - if applied to a method, the whole class can be inherited, just the method can’t be overridden
+    ```csharp
+    public class SalaryValidationAttribute : ValidationAttribute // ValidationAttribute is derived from Attribute (System.Attribute)
+    {
+        public int Min { get; }
+        public int Max { get; }
+    
+        public SalaryValidationAttribute(int min, int max)
+        {
+            Min = min;
+            Max = max;
+            ErrorMessage = $"Salary must be between {Min} and {Max}."; // ErrorMessage: public prop from ValidationAttribute class
+        }
+    
+        public override bool IsValid(object? value) // IsValis: public 
+        {
+            if (value is int salary)
+            {
+                return salary >= Min && salary <= Max;
+            }
+            return false;
+        }
+    }
+    
+    // Employee.cs
+    public class Employee
+    {
+        public string? FullName { get; set; }
+    
+        [SalaryValidation(1000, 5000)]
+        public int Salary { get; set; }
+    }
+    
+    // Program.cs
+    internal class Program
+    {
+        static void Main(string[] args)
+    		{
+    		    Employee employee = new Employee { Salary = 8000 };
+    		
+    		    var context = new ValidationContext(employee);
+    		    var results = new List<ValidationResult>();
+    		    bool isValid = Validator.TryValidateObject(employee, context, results, true);
+    		}
+    }
+    ```
+    
+    Here, the output will be false. The ‘**results’** variable will have list of validation error object with only one error and errorMessage.
+    
+    ```csharp
+    [AttributeUsage(AttributeTargets.Class)] // indicates that is Attribute can only applied on Class types
+    public class MyCustomClassAttribute : Attribute
+    {}
+    ```
+    Here, AttributeUsage applies some conditions over the Custom Attribute class.
