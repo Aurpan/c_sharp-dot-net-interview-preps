@@ -153,6 +153,17 @@ Which of the following option is true?
 
 ---
 
+You are implementing a soft-delete system. The entries need to be removed are marked as delete. How would you now implement a system for all the entities so that it only fetches data which are not marked deleted?
+
+**Options:** (pick only one)
+
+- Add ‘**IsDeleted**’ property to all the entities
+- Put logic to handle the filtering in all the repository methods
+- Add ‘**IsActive**’ field and put logic on it to filter the deleted data
+- Apply ‘**HasQueryFilter**’ on all entities
+
+---
+
 Rest of the questions had a big code snippet and output or output sequence was asked.
 
 <br>
