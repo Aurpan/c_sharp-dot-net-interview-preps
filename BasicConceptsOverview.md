@@ -415,6 +415,26 @@ internal class Program
 
 > Difference in **Func** and **Action:**
 Func has the last parameter to be OUT variable. So, Func returns something. But Action returns void
+> 
+
+## Use Case
+
+```jsx
+public static bool MyAny<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+{
+    if (source == null) throw new ArgumentNullException();
+
+    foreach (var item in source)
+    {
+        if (predicate(item)) return true;
+    }
+
+    return false;
+}
+```
+
+> this extension method works similar to List.Any()
+>
 
 <br><br><br>
 
@@ -699,3 +719,87 @@ public partial class Demo
     {}
     ```
     Here, AttributeUsage applies some conditions over the Custom Attribute class.
+
+  <br><br><br>
+
+  # Expression
+
+- Abstract representation of an executable code
+- it’s a data structure that can contain piece of executable code
+
+```csharp
+Expression<Func<int, int>> expr = x => x + 1;
+```
+
+‘expr’ can carry the lambda expression
+
+```csharp
+public Book GetBookById(Expression<Func<Book, bool>> func)
+{
+	var book = _context.Books.Where(func); // book is IQuaryable here
+	return book.FirstOrDefault();
+}
+```
+
+## Difference between Expression and Delegate
+
+```csharp
+public Book GetBookById(Expression<Func<Book, bool>> func)
+{
+	var book = _context.Books.Where(func); // book is IQuaryable here
+	return book.FirstOrDefault();
+}
+
+// VS
+
+public Book GetBookById(Func<Book, bool> func)
+{
+	var book = _context.Books.Where(func); // book is IEnumerable here
+	return book.FirstOrDefault();
+}
+```
+
+<br><br><br>
+
+# Garbage Collection
+
+- Automatically collects objects with no references and removes them from memory
+
+```csharp
+// Book.cs
+public class Book
+{
+	public string Name {get; set; }
+	
+	~Book() // this is destructor
+	{
+		// Do something here
+	}
+}
+```
+
+> Destructor is always called just before the disposal of an object by Garbage Collector (GC)
+> 
+
+### How it Works
+
+- When any object goes out of scope, that is removed from the stack
+- when GC starts collecting the garbage, it checks into **stack** and **marks the references** in the **Heap**. This is called **Marking Process**.
+- **Unmarked references** are then removed from **Heap**
+
+### 3 Generational Heap (3G Heap)
+
+- Conceptually, there are **3 heaps in .NET runtime (CLR)**
+- While collection garbage, GC transfers the marked ones from **Heap-0 ****to **Heap-1**.
+    - **Unmarked ones are not removed** from Heap-0, rather the address pointer is restored to lowest value and by time the **unmarked references are replaced with new references**
+    - References are in Heap-1, means they have longer life time
+- When Heap-1 is about get full, references with longest life time are moved to Heap-2. This heap is most likely to contain the references with Singleton lifetime.
+
+### Large Object Heap
+
+- Heaps for object with 85Kb
+- Works similar to Heap-2, but works independently
+
+### Reference Videos:
+
+- [https://www.youtube.com/watch?v=BeuNvhd1L_g](https://www.youtube.com/watch?v=BeuNvhd1L_g)
